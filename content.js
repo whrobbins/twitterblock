@@ -6,8 +6,13 @@
 
   let scrollPosition = 0;
 
-  // Initialize immediately - always on, no exceptions
-  init();
+  // Wait for DOM to be ready, then initialize
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    // DOM is already ready
+    init();
+  }
 
   function init() {
     // Check if we're on an allowed page

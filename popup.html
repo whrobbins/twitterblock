@@ -26,78 +26,34 @@
       backdrop-filter: blur(10px);
     }
 
-    .toggle-container {
+    .status {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background: rgba(76, 175, 80, 0.3);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .toggle-label {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 26px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(255, 255, 255, 0.3);
-      transition: 0.3s;
-      border-radius: 26px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.3s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: rgba(76, 175, 80, 0.8);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(24px);
+    .lock-icon {
+      font-size: 20px;
     }
 
     .info {
       font-size: 12px;
       line-height: 1.6;
       opacity: 0.9;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .info-title {
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
     }
 
     .info ul {
@@ -109,44 +65,53 @@
       margin: 4px 0;
     }
 
-    .status {
-      text-align: center;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px;
-      margin-top: 12px;
+    .warning {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(255, 152, 0, 0.2);
       border-radius: 6px;
-      background: rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      line-height: 1.5;
+      border-left: 3px solid rgba(255, 152, 0, 0.8);
+    }
+
+    .warning strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
-  <h1>📜 X Scroll Blocker</h1>
+  <h1>🔒 X Scroll Blocker</h1>
 
   <div class="container">
-    <div class="toggle-container">
-      <span class="toggle-label">Block Scrolling</span>
-      <label class="switch">
-        <input type="checkbox" id="enableToggle" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="status" id="status">
-      Scroll blocking is enabled
+    <div class="status">
+      <span class="lock-icon">🔒</span>
+      <span>Always Active</span>
     </div>
 
     <div class="info">
-      <div class="info-title">How it works:</div>
+      <div class="info-title">What's blocked:</div>
       <ul>
-        <li>Blocks scrolling on X timeline</li>
-        <li>Allows posting tweets</li>
-        <li>Allows checking notifications</li>
-        <li>Allows sending DMs</li>
+        <li>✗ Scrolling on X timeline</li>
+        <li>✗ All scroll attempts (mouse, keyboard, touch)</li>
       </ul>
     </div>
-  </div>
 
-  <script src="popup.js"></script>
+    <div class="info" style="margin-top: 16px;">
+      <div class="info-title">What still works:</div>
+      <ul>
+        <li>✓ Posting tweets</li>
+        <li>✓ Checking notifications</li>
+        <li>✓ Sending DMs</li>
+      </ul>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ No Toggle Available</strong>
+      This extension is permanently active. To disable scroll blocking, you must uninstall the extension from chrome://extensions/
+    </div>
+  </div>
 </body>
 </html>

@@ -1,15 +1,15 @@
-# 📜 X Scroll Blocker
+# 🔒 X Scroll Blocker
 
-A Chrome extension that blocks scrolling on X (formerly Twitter) to help you stay focused, while still allowing you to post tweets, check notifications, and send DMs.
+A Chrome extension that **permanently** blocks scrolling on X (formerly Twitter) to help you stay focused, while still allowing you to post tweets, check notifications, and send DMs.
 
 ## Features
 
-- 🚫 **Blocks scrolling** on X's main timeline and home feed
+- 🔒 **Permanently blocks scrolling** on X's main timeline and home feed - no toggle, no escape!
 - ✅ **Allows posting tweets** - compose and share your thoughts
 - 🔔 **Allows checking notifications** - stay updated with mentions and interactions
 - 💬 **Allows sending DMs** - communicate privately with others
-- 🎛️ **Toggle on/off** - easily enable or disable the extension via popup
 - 🎨 **Beautiful UI** - modern gradient design with smooth animations
+- 🛡️ **Commitment device** - only way to disable is to uninstall the extension
 
 ## Installation
 
@@ -51,8 +51,8 @@ Before installing the extension, you need to generate the icon files. Choose one
 ### Basic Usage
 
 1. Navigate to [x.com](https://x.com) or [twitter.com](https://twitter.com)
-2. The extension will automatically block scrolling on the main timeline
-3. You'll see a notification banner at the top of the page indicating that scrolling is blocked
+2. The extension will **automatically and permanently** block scrolling on the main timeline
+3. You'll see a notification banner at the top of the page: "🔒 Scrolling permanently blocked to help you stay focused!"
 
 ### Allowed Pages
 
@@ -63,39 +63,51 @@ The extension **does NOT block scrolling** on these pages:
 - `/compose/tweet` - Tweet composition
 - `/settings` - Settings pages
 
-### Toggle Extension
+### Extension Status
 
-Click the extension icon in your toolbar to:
-- Enable or disable scroll blocking
-- View extension status
-- See quick info about how it works
+Click the extension icon in your toolbar to view:
+- Confirmation that the extension is "Always Active"
+- What's blocked and what still works
+- Reminder that there is no toggle - to disable, you must uninstall
+
+### Disabling the Extension
+
+⚠️ **Important:** There is no toggle to turn this extension off temporarily. This is by design - it's a commitment device to help you stay focused.
+
+To disable scroll blocking, you must:
+1. Go to `chrome://extensions/`
+2. Find "X Scroll Blocker"
+3. Toggle it off or click "Remove" to uninstall
 
 ## How It Works
 
 The extension uses a content script that:
 
-1. Detects the current URL path on X/Twitter
-2. Blocks scrolling on the main feed using CSS and event listeners
-3. Monitors for page navigation (since X is a single-page application)
-4. Automatically enables scrolling on allowed pages
-5. Displays a friendly notification banner when scrolling is blocked
+1. **Immediately activates** on page load - no checks, no toggles
+2. Detects the current URL path on X/Twitter
+3. **Permanently blocks scrolling** on the main feed using CSS and event listeners
+4. Monitors for page navigation (since X is a single-page application)
+5. Automatically enables scrolling on allowed pages (notifications, DMs, compose)
+6. Displays a notification banner: "🔒 Scrolling permanently blocked to help you stay focused!"
 
 ## Technical Details
 
 ### Files
 
-- `manifest.json` - Extension configuration
-- `content.js` - Main content script that blocks scrolling
-- `popup.html` - Extension popup UI
-- `popup.js` - Popup functionality
+- `manifest.json` - Extension configuration (Manifest V3)
+- `content.js` - Main content script that permanently blocks scrolling
+- `popup.html` - Extension popup UI (information only, no controls)
 - `icons/` - Extension icons
+- `generate_icons.py` - Python script to generate icons
+- `icons/generate-icons.html` - HTML-based icon generator
 
 ### Permissions
 
 The extension requires:
 - `activeTab` - To interact with the current tab
-- `storage` - To save extension settings (enabled/disabled state)
 - `host_permissions` - Access to x.com and twitter.com
+
+**No storage permission needed** - the extension is always active and doesn't store any settings.
 
 ### Privacy
 
@@ -103,15 +115,17 @@ This extension:
 - **Does NOT collect any data**
 - **Does NOT track your browsing**
 - **Does NOT send any information to external servers**
-- Only stores a single boolean value (enabled/disabled) in Chrome's local storage
+- **Does NOT store any settings or preferences**
+- Operates entirely locally on your device
 
 ## Troubleshooting
 
 ### Scrolling is not blocked
 
-1. Make sure the extension is enabled (check the popup)
+1. Verify the extension is installed and enabled at `chrome://extensions/`
 2. Try refreshing the X/Twitter page
 3. Check that you're on a page that should be blocked (not /messages, /notifications, etc.)
+4. Check the browser console for any errors
 
 ### Extension icon not showing
 
@@ -119,11 +133,19 @@ This extension:
 2. Verify the icon files are saved in the `icons/` folder with the correct names
 3. Try reloading the extension from `chrome://extensions/`
 
+### I want to temporarily disable the extension
+
+⚠️ **By design, there is no temporary toggle.** This extension is a commitment device.
+
+To disable scroll blocking:
+1. Go to `chrome://extensions/`
+2. Toggle off "X Scroll Blocker" or uninstall it completely
+
 ### Page won't load properly
 
-1. Try disabling the extension temporarily
-2. Refresh the page
-3. Re-enable the extension if the issue persists
+1. Uninstall the extension from `chrome://extensions/`
+2. Refresh the page to verify it works without the extension
+3. If the issue persists, it's not related to this extension
 
 ## Development
 
@@ -137,11 +159,11 @@ This extension:
 ### Testing
 
 1. Navigate to X/Twitter
-2. Try scrolling - it should be blocked on the main feed
+2. Try scrolling - it should be **permanently blocked** on the main feed
 3. Navigate to `/notifications` - scrolling should work
 4. Navigate to `/messages` - scrolling should work
 5. Try posting a tweet - should work normally
-6. Toggle the extension off and on - verify the behavior changes
+6. Click the extension icon - verify it shows "Always Active" with no toggle
 
 ## Contributing
 
@@ -153,4 +175,4 @@ MIT License - feel free to use and modify as needed.
 
 ---
 
-**Note:** This extension is designed to help reduce mindless scrolling while still allowing you to use X/Twitter intentionally for posting, notifications, and direct communication.
+**Note:** This extension is designed as a **commitment device** to help you eliminate mindless scrolling. It's permanently active by design - there is no toggle. You can still use X/Twitter intentionally for posting, notifications, and direct communication, but you won't be able to scroll through the timeline. To disable it, you must uninstall the extension entirely.

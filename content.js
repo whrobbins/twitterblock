@@ -1,30 +1,13 @@
 // X Scroll Blocker - Content Script
+// Permanently blocks scrolling on X (Twitter) - no toggle, no escape!
 
 (function() {
   'use strict';
 
-  let scrollBlocked = true;
   let scrollPosition = 0;
 
-  // Check if extension is enabled
-  chrome.storage.sync.get(['enabled'], function(result) {
-    scrollBlocked = result.enabled !== false; // Default to true
-    if (scrollBlocked) {
-      init();
-    }
-  });
-
-  // Listen for changes to enabled state
-  chrome.storage.onChanged.addListener(function(changes, namespace) {
-    if (changes.enabled) {
-      scrollBlocked = changes.enabled.newValue;
-      if (scrollBlocked) {
-        init();
-      } else {
-        cleanup();
-      }
-    }
-  });
+  // Initialize immediately - always on, no exceptions
+  init();
 
   function init() {
     // Check if we're on an allowed page
@@ -61,7 +44,7 @@
   function handleNavigation() {
     if (isAllowedPage()) {
       cleanup();
-    } else if (scrollBlocked) {
+    } else {
       blockScrolling();
     }
   }
@@ -152,7 +135,7 @@
           to { transform: translateY(0); }
         }
       </style>
-      📜 Scrolling blocked to help you stay focused!
+      🔒 Scrolling permanently blocked to help you stay focused!
       <span style="opacity: 0.9; font-size: 12px;">
         (You can still post tweets, check notifications, and send DMs)
       </span>

@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
   "name": "X Scroll Blocker",
-  "version": "1.0.0",
-  "description": "Blocks scrolling on X (Twitter) while allowing you to post tweets, check notifications, and send DMs",
+  "version": "2.0.0",
+  "description": "Permanently blocks scrolling on X (Twitter) while allowing you to post tweets, check notifications, and send DMs",
   "permissions": [
-    "activeTab",
-    "storage"
+    "activeTab"
   ],
   "host_permissions": [
     "https://x.com/*",

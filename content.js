@@ -1,10 +1,8 @@
-// X Scroll Blocker - Content Script
-// Permanently blocks scrolling on X (Twitter) - no toggle, no escape!
+// X Feed Blocker - Content Script
+// Removes the timeline feed and sidebar to prevent mindless scrolling
 
 (function() {
   'use strict';
-
-  let scrollPosition = 0;
 
   // Wait for DOM to be ready, then initialize
   if (document.readyState === 'loading') {
@@ -17,10 +15,14 @@
   function init() {
     // Check if we're on an allowed page
     if (isAllowedPage()) {
-      return; // Don't block scrolling on allowed pages
+      return; // Don't remove content on allowed pages
     }
 
-    blockScrolling();
+    // Remove feed content
+    removeFeedContent();
+
+    // Watch for new feed content being added (SPA behavior)
+    observeFeedChanges();
 
     // Monitor for URL changes (SPA navigation)
     let lastUrl = location.href;
@@ -31,6 +33,9 @@
         handleNavigation();
       }
     }).observe(document, { subtree: true, childList: true });
+
+    // Show notification banner
+    showBanner();
   }
 
   function isAllowedPage() {
@@ -39,7 +44,7 @@
       '/messages',           // DMs
       '/notifications',      // Notifications
       '/compose/tweet',      // Compose tweet modal
-      '/settings',           // Settings (in case user needs to access)
+      '/settings',           // Settings
     ];
 
     // Check if current path matches any allowed paths
@@ -48,64 +53,100 @@
 
   function handleNavigation() {
     if (isAllowedPage()) {
-      cleanup();
+      removeBanner();
     } else {
-      blockScrolling();
+      removeFeedContent();
+      showBanner();
     }
   }
 
-  function blockScrolling() {
-    // Save current scroll position
-    scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+  function removeFeedContent() {
+    // X.com timeline feed selectors
+    const feedSelectors = [
+      '[data-testid="primaryColumn"]',  // Main timeline column
+      '[aria-label="Timeline: Your Home Timeline"]',
+      '[aria-label="Timeline: Trending now"]',
+      'main [role="region"]',  // Main content regions
+    ];
 
-    // Prevent scrolling via various methods
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollPosition}px`;
-    document.body.style.width = '100%';
+    // Sidebar selectors
+    const sidebarSelectors = [
+      '[data-testid="sidebarColumn"]',  // Right sidebar
+      '[data-testid="RightSidebar"]',
+      'aside',  // Generic aside element
+    ];
 
-    // Add event listeners
-    window.addEventListener('wheel', preventDefault, { passive: false });
-    window.addEventListener('touchmove', preventDefault, { passive: false });
-    window.addEventListener('keydown', preventKeyScroll, { passive: false });
+    // Remove feed elements
+    feedSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        // Only remove if it's actually the timeline, not notifications/messages
+        if (!isAllowedPage()) {
+          el.style.display = 'none';
+        }
+      });
+    });
 
-    // Show notification banner
-    showBanner();
+    // Remove sidebar elements
+    sidebarSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        el.style.display = 'none';
+      });
+    });
+
+    // Add a message where the feed was
+    addBlockedMessage();
   }
 
-  function cleanup() {
-    // Restore scrolling
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
+  function addBlockedMessage() {
+    // Find the main element or primary column
+    const main = document.querySelector('main') || document.querySelector('[data-testid="primaryColumn"]');
 
-    // Restore scroll position
-    window.scrollTo(0, scrollPosition);
+    if (main && !document.getElementById('x-feed-blocked-message')) {
+      const message = document.createElement('div');
+      message.id = 'x-feed-blocked-message';
+      message.style.cssText = `
+        padding: 60px 20px;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin: 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      `;
 
-    // Remove event listeners
-    window.removeEventListener('wheel', preventDefault, { passive: false });
-    window.removeEventListener('touchmove', preventDefault, { passive: false });
-    window.removeEventListener('keydown', preventKeyScroll, { passive: false });
+      message.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 20px;">🔒</div>
+        <h2 style="font-size: 24px; margin-bottom: 12px; font-weight: 600;">Feed Blocked</h2>
+        <p style="font-size: 16px; opacity: 0.9; max-width: 400px; margin: 0 auto 24px; line-height: 1.6;">
+          The timeline feed has been removed to help you stay focused.
+        </p>
+        <div style="font-size: 14px; opacity: 0.8; line-height: 1.8;">
+          <p><strong>You can still:</strong></p>
+          <p>✓ Post tweets (click compose button)</p>
+          <p>✓ Check notifications</p>
+          <p>✓ Send and receive DMs</p>
+        </div>
+      `;
 
-    // Remove banner
-    removeBanner();
-  }
-
-  function preventDefault(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  function preventKeyScroll(e) {
-    // Prevent scrolling with arrow keys, page up/down, space, home, end
-    const keys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
-    if (keys.includes(e.keyCode)) {
-      e.preventDefault();
-      e.stopPropagation();
+      main.appendChild(message);
     }
+  }
+
+  function observeFeedChanges() {
+    // Observe the document for changes and re-remove feed content
+    const observer = new MutationObserver(() => {
+      if (!isAllowedPage()) {
+        removeFeedContent();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   }
 
   function showBanner() {
@@ -123,40 +164,26 @@
       right: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 12px 20px;
+      padding: 10px 20px;
       text-align: center;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       z-index: 999999;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      animation: slideDown 0.3s ease-out;
     `;
 
     banner.innerHTML = `
-      <style>
-        @keyframes slideDown {
-          from { transform: translateY(-100%); }
-          to { transform: translateY(0); }
-        }
-      </style>
-      🔒 Scrolling permanently blocked to help you stay focused!
-      <span style="opacity: 0.9; font-size: 12px;">
-        (You can still post tweets, check notifications, and send DMs)
-      </span>
+      🔒 Feed blocked - You can still post, check notifications, and send DMs
     `;
 
     document.body.appendChild(banner);
-
-    // Adjust body padding to account for banner
-    document.body.style.paddingTop = banner.offsetHeight + 'px';
   }
 
   function removeBanner() {
     const banner = document.getElementById('x-scroll-blocker-banner');
     if (banner) {
       banner.remove();
-      document.body.style.paddingTop = '';
     }
   }
 

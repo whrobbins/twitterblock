@@ -1,0 +1,29 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Generated icons (if using Python script)
+# Comment these out if you want to commit the generated icons
+# icons/icon16.png
+# icons/icon48.png
+# icons/icon128.png
